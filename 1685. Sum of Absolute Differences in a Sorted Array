@@ -1,0 +1,29 @@
+class Solution {
+public:
+    vector<int> getSumAbsoluteDifferences(vector<int>& nums) {
+        vector<int> prefix = nums;
+        for(int i = 1 ; i < prefix.size() ;i++){
+            prefix[i] = prefix[i] + prefix[i-1];
+        }
+        vector<int> ans;
+        for(int i = 0 ;i<nums.size() ;i++){
+            int leftsum;
+            int rightsum;
+            int leftpro=0;
+            int rightpro=0;
+            if(i!=0){
+                leftsum = prefix[i-1];
+                leftpro = nums[i]*(i);
+            }else leftsum = 0 ;
+            if(i!=nums.size()-1){
+                rightsum = prefix[prefix.size()-1] - prefix[i];
+                rightpro = nums[i]*(prefix.size()-i-1);
+            }
+            else rightsum = 0;
+            
+            int result = rightsum - rightpro + leftpro - leftsum;
+            ans.push_back(abs(result));
+        }
+        return ans;
+    }
+};
