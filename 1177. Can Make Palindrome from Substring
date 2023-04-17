@@ -1,0 +1,25 @@
+class Solution {
+public:
+    vector<bool> canMakePaliQueries(string s, vector<vector<int>>& queries) { 
+        int n=s.size();
+        unordered_map<int,int> mask_array(n); 
+        int mask=0;
+        mask_array[-1]=0;
+        for(int i=0;i<n;i++){
+            mask^=(1<<(s[i]-'a'));
+            mask_array[i]=mask;
+        }   
+        vector<bool> ans;
+        for(auto q:queries){
+            int left=q[0];
+            int right=q[1];
+            int change=q[2];
+            int required_change=__builtin_popcount(mask_array[right]^mask_array[left-1]);       
+            if(change>=required_change/2)
+                ans.push_back(true);
+            else 
+                ans.push_back(false);
+        }
+        return ans;
+    }
+};
