@@ -1,0 +1,18 @@
+class Solution {
+public:
+    vector<int> prefix;
+    int sum = 0;
+    Solution(vector<int>& w) {
+        for(int i=0; i<w.size(); i++){
+            sum += w[i];
+            prefix.push_back(sum);
+        }
+    }
+    
+    int pickIndex() {
+        
+        int rad = double(rand() %(sum)) +1 ;
+        int val = lower_bound(prefix.begin(), prefix.end(), rad) - prefix.begin();
+        return val;
+    }
+};
