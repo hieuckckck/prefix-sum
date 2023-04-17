@@ -1,0 +1,51 @@
+// We are considering two cases :
+//  1. when nums[i]<=i
+//  2. whem nums[i]>i 
+
+
+//  Lets calculate good rotations for both cases now ...... Good roations are those which will give us score 
+
+//  for case 1 , that is nums[i]<=i 
+//  if we rotate 1 times then it will go to i-1 
+//  if we rotate again it will go to i-2  
+//  What will be the good indices for nums[i] ?? all the indexes greater or equal to nums[i] and we are at i right now so to reach i what we need is i-nums[i] , we want nums[i] to be less than index so from  0 - (i-nums[i]) is valid but the indexes after the i will also add to score so to consider them we will take i - (n-1)
+
+//Now for case 2 , that is nums[i]>i
+//  if we rotate 1 times then it will go to i-1 
+//  if we rotate again it will go to i-2  
+// What will be the good indices for nums[i] ?? all the indexes greater or equal to nums[i] 
+// currently nums[i]>i means we need to shift nums[i] to right side and for that how many rotations we need atlead? i+1 and what are the max to reach the place where nums[i]=i , its how much nums[i] is ahead and ie  nums[i] - i to calc from left side lets substract from by n so now it becomes n-nums[i]+i , so good rotations are (i+1) - (n-(nums[i]-i)) 
+
+// Now we have good rotations for every number , lets just calculate which rotation brings max score which is similar to the gfg problem 
+  
+//       problem nume : powerfull interger
+//      from contest  weekly-interview-series-76
+
+
+
+
+
+
+class Solution {
+public:
+    int bestRotation(vector<int>& nums) {
+        
+        vector<pair<int,int>>goodIndices;
+        map<int,int>mp;
+        
+        for(int i=0;i<nums.size();i++)
+        if(nums[i]<=i)
+        goodIndices.push_back({0,i-nums[i]}) , goodIndices.push_back({i+1,nums.size()-1});
+        else
+        goodIndices.push_back({i+1 , i+ (nums.size()-nums[i])});
+        
+        for(auto i:goodIndices)
+        mp[i.first]++ , mp[i.second+1]--;
+        
+        int tempsum = 0 , rotations=0 , sum=0;
+        for(int i=0;i<nums.size();i++)
+        tempsum+=mp[i] , rotations=tempsum>sum?i:rotations  , sum=max(tempsum,sum);
+        
+        return rotations;
+    }
+};
