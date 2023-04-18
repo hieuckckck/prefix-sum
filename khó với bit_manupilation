@@ -1,0 +1,37 @@
+class Solution {
+public:
+    vector<bool> canMakePaliQueries(string s, vector<vector<int>>& queries) { 
+        int n=s.size();
+        unordered_map<int,int> mask_array(n); 
+        int mask=0;
+        mask_array[-1]=0;
+        for(int i=0;i<n;i++){
+            mask^=(1<<(s[i]-'a'));
+            mask_array[i]=mask;
+        }   
+        vector<bool> ans;
+        for(auto q:queries){
+            int left=q[0];
+            int right=q[1];
+            int change=q[2];
+            int required_change=__builtin_popcount(mask_array[right]^mask_array[left-1]);       
+            if(change>=required_change/2)
+                ans.push_back(true);
+            else 
+                ans.push_back(false);
+        }
+        return ans;
+    }
+};
+Question will become easy if we able to count number of odd occurring chracter in O(1) time.Think of xor ,mask and prefix of mask.
+Here I am calculating odd count by taking xor just like prefix sum.For example
+a b c d a
+mask_prefix[0]=0001
+mask_prefix[1]=0011
+mask_prefix[2]=0111
+mask_prefix[3]=1111
+mask_prefix[4]=1110
+now if we are given count odd occuring char in substring from 1 to 4
+this will be equal to mask_prefix[4]^mask_prefix[1-1]=1110^0001=1111 i.e abcd
+1->3 mask_prefix[3]^mask_prefix[1-1]=1111^0001=1110 i.e bcd
+Now if we are given liberty to change half of odd occuring chracter we can make it pallindrome.
