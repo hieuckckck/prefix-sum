@@ -1,0 +1,52 @@
+Intuition
+HINT: For length 3 palindromes first and last character should be same so find no. of distinct characters b/w first and last occurence of a character and that will be the number of distinct 3 size palindromes b/w that type character in the given string so do this for all the presnt characters in the string we will get all the 3 sized palindromes.
+
+Approach
+So first we should find first and last occurences of each character in the string then for each character find how many distinct characters lie b/w its first and last occurence .
+Can be done using two arrays in which we store first and last occutence as indexes and for checking distinct characters we use a set and just add the set's size in our answer that will be 3 sized palindromes between that particular characters first and last occurence.
+
+Complexity
+Time complexity:O(26∗n)O(26*n)O(26∗n)
+Space complexity:O(n)
+Code
+class Solution {
+public:
+    int countPalindromicSubsequence(string s) {
+    
+        int  n=s.size();
+        vector<int>f(26,1000001),last(26);
+        for(int i=0;i<n;i++){
+            f[s[i]-'a']=min(i,f[s[i]-'a']);
+            last[s[i]-'a']=i;
+        }
+      int  ans=0;
+      for(int i=0;i<26;i++){
+           unordered_set<char>st;
+
+        for(int j=f[i]+1;j<last[i];j++){
+            st.insert(s[j]);
+        } 
+        ans+=st.size();
+  }
+      return ans;
+
+    }
+};
+Just One line
+
+ int countPalindromicSubsequence(string s) {
+    
+        int  n=s.size();
+        vector<int>f(26,1000001),last(26);
+        for(int i=0;i<n;i++){
+            f[s[i]-'a']=min(i,f[s[i]-'a']);
+            last[s[i]-'a']=i;
+        }
+      int  ans=0;
+      for(int i=0;i<26;i++){
+          if(f[i]<last[i])
+          ans+=unordered_set(begin(s)+f[i]+1,begin(s)+last[i]).size();
+      }
+      return ans;
+
+    }
