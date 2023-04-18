@@ -1,0 +1,104 @@
+class Solution 
+{
+public:
+    int findTheLongestSubstring(string s) 
+    {
+        //final ans to be retruned from the function
+        int ans = 0;
+
+        //the count of the vowel must be even number of times 
+        //vowels can occur even number of times..0 , 2 , 4 , 6...2(n)  
+
+        //to maintain the bit mask we will have a count 
+        int num = 0;
+
+        //we are going to store the number in a unordered_map
+        unordered_map<int,int>mp;    
+
+        //an idx to iterate over the string
+        int idx = 0;
+        
+        //storing the inital count in the map
+        mp[num] = -1;
+
+        //basically the consonant will help to increase the length of the string
+        while(idx < s.length())
+        {
+            char ch = s[idx];
+            
+            if(isVowel(ch) == true)
+            {
+                char ch = s[idx];
+                int pos = ch - 'a';
+
+                //we will toggle the bit to the currosponding pos of the char
+                num = (num ^ (1<<pos));
+
+                if(mp.find(num) != mp.end())
+                {
+                    //previously we have encountred the num before also
+                    int start = mp[num]+1;
+                    int end   = idx;
+                    int wind_size = (end - start + 1);
+
+                    if(wind_size > ans)
+                    ans = wind_size;
+                }
+            }
+            else
+            {
+                //consonant will only help to increase the length of the substring
+                //in which the count of the vowel is even number of times
+              
+                //consonant will not contribute any value to the num
+                int start = mp[num]+1;
+                int end   = idx;
+                int wind_size = (end - start + 1);
+
+                if(wind_size > ans)
+                ans = wind_size;
+            }
+            if(mp.find(num) == mp.end())
+            {
+                mp[num] = idx;
+            }
+            idx++;
+        }
+        return ans;
+    }
+    bool isVowel(char ch)
+    {
+        if(ch == 'a') return true;
+        if(ch == 'e') return true;
+        if(ch == 'i') return true;
+        if(ch == 'o') return true;
+        if(ch == 'u') return true;
+
+        return false;
+    }
+};
+c2:
+class Solution {
+public:
+    map<char,int>m;
+    int findTheLongestSubstring(string s)
+    {
+        m['a']=1;m['e']=2;m['i']=3;m['o']=4;m['u']=5;
+        map<int ,int>mp;
+        mp[0]=-1;
+        int cnt=0,ans=0;
+        for(int i=0;i<s.size();i++)
+        {
+            if(s[i]=='a' || s[i]=='e' || s[i]=='i'|| s[i]=='o' || s[i]=='u')
+            cnt=cnt^(1<<(m[s[i]]));
+           // cout<<cnt<<" ";
+            if(mp.count(cnt))
+            {
+                ans=max(ans,i-mp[cnt]);
+            }
+            else
+                mp[cnt]=i;
+        }
+        return ans;
+    }
+};
