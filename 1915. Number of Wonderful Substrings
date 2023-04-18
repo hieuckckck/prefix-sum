@@ -1,0 +1,43 @@
+This problem is very similar to subarray sum equals k. https://leetcode.com/problems/subarray-sum-equals-k/
+
+Store the current string in a frequency table of length ten and store the freq of each char. Since we only care about the parity of the substring we can use bitmasks to be efficient! We store the masks into a hashtable then the problem reduces to subarray sum equals k.
+
+Just make sure to count separately the ways to get the 0 mask (all evens) and exactly 1 odd count substring.
+
+Only other trick is to use long long to avoid overflow!!
+
+O(10 * n)
+
+using ll = long long;
+class Solution {
+public:
+    long long wonderfulSubstrings(string s) {
+		int n = s.size();
+		unordered_map<int, ll> mp;
+		mp[0] = 1;
+		ll res = 0, sum = 0;
+		for (int i = 0; i < n; i++) {
+			// store the char as a bit in a mask
+			int c = s[i] - 'a';
+			// use xor to flip parity
+			sum ^= (1 << c);
+
+			// the ways to get 0 odds is the number of masks 'sum' 
+			// since they cancel each other in a subtraction
+			if (mp.count(sum)) {
+				res += mp[sum];
+			}
+
+			// count ways to get exactly 1 bit separately O(10)
+			for (int b = 0; b < 10; b++) {
+				int nsum = sum;
+				if (mp.count(nsum ^ (1 << b))) {
+					res += mp[nsum ^ (1 << b)];
+				}
+			}
+			mp[sum]++;
+		}
+		return res;
+        
+    }
+};
