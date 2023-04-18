@@ -14,3 +14,17 @@ int subarraySum(vector<int>& nums, int k) {
         return ans;
 //PLEASE UPVOTE IF YOU LIKE MY SOLUTION  :)
     }
+int subarraySum(vector<int>& nums, int k) {
+        unordered_map<int,int> map;
+        
+        int sum = 0, result = 0;
+        map[sum] = 1;
+        
+        for (int n : nums) {
+            sum += n;
+            result += map[sum - k];
+            map[sum]++;
+        }
+        
+        return result;
+    }
