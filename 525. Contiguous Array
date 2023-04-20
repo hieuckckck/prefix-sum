@@ -1,57 +1,92 @@
-class Solution {
-public:
-   
-    int getLongestSubarray(vector<int>& A, int K){
-    int N=A.size();
-    unordered_map<int,int> map;
-        int presum=0,res=0;
-        for(int i=0;i<N;i++){
-            presum+=A[i];
-            if(presum==K){
-                res=i+1;
-            }
-            if(map.find(presum)==map.end()){
-                map.insert({presum,i});
-                
-            }
-            if(map.find(presum-K)!=map.end()){
-                res=max(res,i-map[presum-K]);
-            }
-        }
-        return res;
-    }
+ APPROACH 1 : BRUTE FORCE thuat toan vet can
 
+The brute force approach is simple.
+We traverse the array using 2 loops.
+We start at i = 0 & traverse till the last index using loop 1 & loop 2 traverses from i & traverses till the last index.
+We consider every possible subarray within the given array and count the number of zeros and ones in each subarray.
+Each time, the no. of zeroes & ones becomes equal we update the maxLength.
+Time Compelxity : O(n^2)
 
-    int findMaxLength(vector<int>& arr) {
-        int n=arr.size();
-        for(int i=0;i<n;i++){
-             if(arr[i]==0){
-             arr[i]=-1;
-           
-         }
-     } 
-    return getLongestSubarray(arr,0);
-    }
-};
-c2:
+Space Complexity : O(1)
+
+Code :
+
 class Solution {
 public:
     int findMaxLength(vector<int>& nums) {
-        unordered_map<int,int> mp;
-        int x=0;
-        mp[0]=-1;
-        int ans=0;
-        for(int i=0;i<nums.size();i++)
-        {
-            if(nums[i]==0)
-                x--;
-            else
-                x++;
-            if(mp.find(x)!=mp.end())
-                ans=max(ans,i-mp[x]);
-            else
-                mp[x]=i;
+		int maxlen = 0;
+        for (int i = 0; i < nums.size(); i++) {
+            int zeroes = 0, ones = 0;
+            for (int j = i; j < nums.size(); j++) {
+                if (nums[j] == 0) {
+                    zeroes++;
+                } else {
+                    ones++;
+                }
+                if (zeroes == ones) {
+                    maxlen = max(maxlen, j - i + 1);
+                }
+            }
         }
-        return ans;
+        return maxlen;
+    }
+};
+✔️ APPROACH 2 : Using Array
+
+We use a variable sum, which is used to store the relative number of ones and zeros encountered so far.
+sum is incremented by one whenever a 1 is encountered and decremented by one whenever a 0 is encountered.
+We traverse the array nums from the beginning.
+If at any index, sum becomes zero, it means that we've encountered equal number of zeros and ones from the beginning till the current index.
+And at any index, we encounter a sum that's already been encountered at some previous index, it means that the number of 0's and 1's are equal between the indices corresponding to the equal sum values.
+We keep track of the indices that correspond to the same sum with maximum difference between the indices to find the maximum length of the subarrays with equal number of 0's & 1's.
+Now, sum can range between -n (When all elements are zeros) to +n (When all elements are ones).
+Thus, we make use of an array arr of size 2n+1 to keep a track of the all values of sum encountered so far.
+We make an entry containing the current element's index in the arrarr for a new sum encountered everytime.
+Whenever, we encounter the same sum again, we determine the length of the subarray lying between the indices corresponding to the same sum values.
+Time Complexity : O(n)
+
+Space Complexity : O(n)
+
+Code :
+
+class Solution {
+public:
+    int findMaxLength(vector<int>& nums) {
+		vector<int> arr(2*nums.size() + 1, INT_MIN);
+		arr[nums.size()] = -1;
+        int maxLen = 0, sum = 0;                                      vd:a[5]=a[5-4]=1 với kích thước của arr là 4 phần tử ,ý tưởng giống c3.
+        for (int i = 0; i < nums.size(); i++) {
+            sum += (nums[i] == 0 ? -1 : 1);
+			if (arr[sum + nums.size()] >= -1)  maxLen = max(maxLen, i - arr[sum + nums.size()]);
+			else  arr[sum + nums.size()] = i; 
+        }
+        return maxLen;
+    }
+};
+✔️ APPROACH 3 : Using Hash Table
+
+The appproach is same as that of the previous one.
+But here we use a map instead of an array of size 2n+1, because it's not necessary that we'll encounter all possible sums in between -n & +n.
+The array will store the indices for each new sum encountered & if a sum is already encountered it will determine the difference between the 2 indices.
+At each index, it updates the maxLen of equal number of 0's & 1's.
+Finally, we return maxLen.
+Time Complexity : O(n)
+
+Space Complexity : O(n)
+
+Code :
+
+class Solution {
+public:
+    int findMaxLength(vector<int>& nums) {
+        int sum=0, maxLen=0;
+        unordered_map<int, int> seen{{0, -1}};
+        
+        for(int i=0; i<nums.size(); i++){
+            sum += nums[i]==1 ? 1 : -1;
+            if(seen.count(sum)) maxLen = max(maxLen, i-seen[sum]);
+            else seen[sum] = i;
+        }
+        return maxLen;
     }
 };
