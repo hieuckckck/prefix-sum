@@ -90,3 +90,123 @@ public:
         return maxLen;
     }
 };
+
+tương tự nhưng khó hơn:
+
+1371. Find the Longest Substring Containing Vowels in Even Counts
+
+class Solution 
+{
+public:
+    int findTheLongestSubstring(string s) 
+    {
+        //final ans to be retruned from the function
+        int ans = 0;
+
+        //the count of the vowel must be even number of times 
+        //vowels can occur even number of times..0 , 2 , 4 , 6...2(n)  
+
+        //to maintain the bit mask we will have a count 
+        int num = 0;
+
+        //we are going to store the number in a unordered_map
+        unordered_map<int,int>mp;    
+
+        //an idx to iterate over the string
+        int idx = 0;
+        
+        //storing the inital count in the map
+        mp[num] = -1;
+
+        //basically the consonant will help to increase the length of the string
+        while(idx < s.length())
+        {
+            char ch = s[idx];
+            
+            if(isVowel(ch) == true)
+            {
+                char ch = s[idx];
+                int pos = ch - 'a';
+
+                //we will toggle the bit to the currosponding pos of the char
+                num = (num ^ (1<<pos));
+
+                if(mp.find(num) != mp.end())
+                {
+                    //previously we have encountred the num before also
+                    int start = mp[num]+1;
+                    int end   = idx;
+                    int wind_size = (end - start + 1);
+
+                    if(wind_size > ans)
+                    ans = wind_size;
+                }
+            }
+            else
+            {
+                //consonant will only help to increase the length of the substring
+                //in which the count of the vowel is even number of times
+              
+                //consonant will not contribute any value to the num
+                int start = mp[num]+1;
+                int end   = idx;
+                int wind_size = (end - start + 1);
+
+                if(wind_size > ans)
+                ans = wind_size;
+            }
+            if(mp.find(num) == mp.end())
+            {
+                mp[num] = idx;
+            }
+            idx++;
+        }
+        return ans;
+    }
+    bool isVowel(char ch)
+    {
+        if(ch == 'a') return true;
+        if(ch == 'e') return true;
+        if(ch == 'i') return true;
+        if(ch == 'o') return true;
+        if(ch == 'u') return true;
+
+        return false;
+    }
+};
+
+1542. Find Longest Awesome Substring
+
+class Solution {
+public:
+    int longestAwesome(string s) {
+        // 3 2 4 2 4 1 5
+        unordered_map<int,int>mp;
+        int ans=1;
+        int num=0;
+        mp[0]=-1;
+        for(int i=0;i<s.length();i++)
+        {
+            num=num^(1<<(s[i]-'0'));
+            // case 1
+            if(mp.find(num)!=mp.end())
+            {
+                ans=max(ans,i-mp[num]);
+            }
+            // checking for palindrome
+            for(int j=0;j<=9;j++)
+            {
+                int mask=num^(1<<j);
+                if(mp.find(mask)!=mp.end())
+                {
+                    ans=max(ans,i-mp[mask]);
+                }
+            }
+            if(mp.find(num)==mp.end())
+            {
+                mp[num]=i;
+            }
+        }
+        return ans;
+    }
+};
